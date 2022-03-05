@@ -30,5 +30,15 @@ namespace PaletteSwapper
             string[] parts = filename.Split('\\');
             bitmap.Save("out\\" + parts[1]);
         }
+
+        public static void SavePalette(List<Color> palette)
+        {
+            Bitmap bitmap = new Bitmap(palette.Count, 1);
+            for (int i = 0; i < bitmap.Width; i++)
+            {
+                bitmap.SetPixel(i, 0, palette[i]);
+            }
+            bitmap.Save("out\\palette_input.png");
+        }
     }
 }

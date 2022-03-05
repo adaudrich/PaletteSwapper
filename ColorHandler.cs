@@ -17,8 +17,7 @@ namespace PaletteSwapper
             {
                 for (int j = 0; j < bitmap.Height; j++)
                 {
-                    Color color = bitmap.GetPixel(i, j);
-
+                    Color color = Color.FromArgb(255, bitmap.GetPixel(i, j));
                     if (!colors.Contains(color))
                     {
                         colors.Add(color);
@@ -28,18 +27,39 @@ namespace PaletteSwapper
             return colors;
         }
 
-        public static Bitmap SwapColors(Bitmap bitmap, List<Color> paletteColors)
+        public static Bitmap SwapColors(Bitmap bitmap, List<Color> targetColors)
         {
             List<Color> imageColors = GetBitmapColors(bitmap);
-            Dictionary<Color, Color> colorMap = GetColorMap(imageColors, paletteColors);
+            Dictionary<Color, Color> colorMap = GetColorMap(imageColors, targetColors);
             Bitmap newBitmap = new Bitmap(bitmap.Width, bitmap.Height);
             for (int i = 0; i < bitmap.Width; i++)
             {
                 for (int j = 0; j < bitmap.Height; j++)
                 {
-                    //get the pixel from the scrBitmap image
                     Color actualColor = bitmap.GetPixel(i, j);
-                    newBitmap.SetPixel(i, j, colorMap[actualColor]);
+                    if (colorMap.ContainsKey(actualColor))
+                    {
+                        newBitmap.SetPixel(i, j, Color.FromArgb(actualColor.A, colorMap[actualColor]));
+                    }
+                }
+            }
+            return newBitmap;
+        }
+
+        public static Bitmap ReplaceColors(Bitmap bitmap, List<Color> inputColors, List<Color> targetColors)
+        {
+            Bitmap newBitmap = new Bitmap(bitmap.Width, bitmap.Height);
+            for (int i = 0; i < bitmap.Width; i++)
+            {
+                for (int j = 0; j < bitmap.Height; j++)
+                {
+                    Color actualColor = bitmap.GetPixel(i, j);
+                    Color color = Color.FromArgb(actualColor.A, actualColor);
+                    int index = inputColors.IndexOf(color);
+                    if (index > -1)
+                    {
+                        newBitmap.SetPixel(i, j, targetColors[index]);
+                    }
                 }
             }
             return newBitmap;
